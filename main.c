@@ -113,7 +113,9 @@ main(int ac, char *av[])
 	char *f, *sep;
 	int c, asm;
 
+    /* 默认汇编 */
 	asm = Defasm;
+    /* 默认target */
 	T = Deftgt;
 	outf = stdout;
 	while ((c = getopt(ac, av, "hd:o:G:t:")) != -1)
@@ -167,6 +169,7 @@ main(int ac, char *av[])
 			exit(c != 'h');
 		}
 
+    /* 需要根据不同平台修正符号名称 */
 	switch (asm) {
 	case Gaself:
 		gasloc = ".L";
@@ -180,6 +183,7 @@ main(int ac, char *av[])
 
 	do {
 		f = av[optind];
+        /* 读输入参数 */
 		if (!f || strcmp(f, "-") == 0) {
 			inf = stdin;
 			f = "-";
@@ -190,6 +194,7 @@ main(int ac, char *av[])
 				exit(1);
 			}
 		}
+        /* 分析中间输入 */
 		parse(inf, f, data, func);
 	} while (++optind < ac);
 

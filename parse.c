@@ -14,8 +14,11 @@ Op optab[NOp] = {
 
 typedef enum {
 	PXXX,
+    /* 标签 */
 	PLbl,
+    /* phi 结点 */
 	PPhi,
+    /* 指令 */
 	PIns,
 	PEnd,
 } PState;
@@ -155,13 +158,17 @@ lexinit()
 	if (done)
 		return;
 	for (i=0; i<NPubOp; ++i)
+        /* optab指令表，就是原始指令后面加上长度标志等 */
 		if (optab[i].name)
+            /* kwmap是关键词 */
 			kwmap[i] = optab[i].name;
+
 	assert(Ntok <= CHAR_MAX);
 	for (i=0; i<Ntok; ++i)
 		if (kwmap[i]) {
 			h = hash(kwmap[i])*K >> M;
 			assert(lexh[h] == Txxx);
+            /* lexh关键词， 关键词hash值索引关键字id */
 			lexh[h] = i;
 		}
 	done = 1;
@@ -789,11 +796,13 @@ parsefn(int export)
 	curb = 0;
 	nblk = 0;
 	curi = insb;
+    /* 分配函数结构体 */
 	curf = alloc(sizeof *curf);
 	curf->ntmp = 0;
 	curf->ncon = 1; /* first constant must be 0 */
 	curf->tmp = vnew(curf->ntmp, sizeof curf->tmp[0], Pfn);
 	curf->con = vnew(curf->ncon, sizeof curf->con[0], Pfn);
+
 	for (i=0; i<Tmp0; ++i)
 		if (T.fpr0 <= i && i < T.fpr0 + T.nfpr)
 			newtmp(0, Kd, curf);
@@ -1051,6 +1060,10 @@ Done:
 	cb(&d);
 }
 
+/**
+ * @param data 对数据做处理的函数
+ * @param func 对函数做处理的函数
+ */
 void
 parse(FILE *f, char *path, void data(Dat *), void func(Fn *))
 {
@@ -1073,6 +1086,7 @@ parse(FILE *f, char *path, void data(Dat *), void func(Fn *))
 			t = nextnl();
 			if (t == Tfunc) {
 		case Tfunc:
+                /* 自顶向下式ll(1)的遍历函数 */
 				func(parsefn(export));
 				break;
 			}

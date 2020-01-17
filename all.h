@@ -74,7 +74,9 @@ struct Ref {
 };
 
 enum {
+    /* 临时变量 */
 	RTmp,
+    /* 常量 */
 	RCon,
 	RType,
 	RSlot,
@@ -180,6 +182,9 @@ enum {
 #define isarg(o) INRANGE(o, Oarg, Oarge)
 #define isret(j) INRANGE(j, Jret0, Jretc)
 
+/**
+ * 临时变量的类型
+ */
 enum Class {
 	Kx = -1, /* "top" class (see usecheck() and clsmerge()) */
 	Kw,
@@ -213,6 +218,7 @@ struct Phi {
 	Phi *link;
 };
 
+/* 基本块 */
 struct Blk {
 	Phi *phi;
 	Ins *ins;
@@ -330,6 +336,7 @@ struct Addr { /* amd64 addressing */
 };
 
 struct Fn {
+    /* 开始的基本块 */
 	Blk *start;
 	Tmp *tmp;
 	Con *con;

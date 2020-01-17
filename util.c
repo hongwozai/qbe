@@ -81,11 +81,13 @@ alloc(size_t n)
 	if (n == 0)
 		return 0;
 	if (nptr >= NPtr) {
+        /* 256个ptr长度 */
 		pp = emalloc(NPtr * sizeof(void *));
 		pp[0] = pool;
 		pool = pp;
 		nptr = 1;
 	}
+    /* 就是一个向量，每个向量里有个malloc的内存，最后一起释放 */
 	return pool[nptr++] = emalloc(n);
 }
 
@@ -107,6 +109,10 @@ freeall()
 	nptr = 1;
 }
 
+/**
+ * @param len 长度
+ * @param esz 每个元素长度
+ */
 void *
 vnew(ulong len, size_t esz, Pool pool)
 {
@@ -114,6 +120,7 @@ vnew(ulong len, size_t esz, Pool pool)
 	ulong cap;
 	Vec *v;
 
+    /* 取2的幂次最大的 */
 	for (cap=VMin; cap<len; cap*=2)
 		;
 	f = pool == Pheap ? emalloc : alloc;
@@ -333,6 +340,8 @@ newtmp(char *prfx, int k,  Fn *fn)
 	memset(&fn->tmp[t], 0, sizeof(Tmp));
 	if (prfx)
 		sprintf(fn->tmp[t].name, "%s.%d", prfx, ++n);
+
+    /* 新增一个临时变量 */
 	fn->tmp[t].cls = k;
 	fn->tmp[t].slot = -1;
 	fn->tmp[t].nuse = +1;
